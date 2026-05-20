@@ -127,6 +127,10 @@ lifelines
 coexpy
 matplotlib
 joblib
+# R dependencies (for gravendeel_validation.ipynb preprocessing step)
+# Install in R:
+# install.packages("BiocManager")
+# BiocManager::install("affy")
 ```
 
 Install:
