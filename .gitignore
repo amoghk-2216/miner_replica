@@ -1,0 +1,20 @@
+# data, results and archived runs are not tracked
+data/
+archive/
+reference/
+docs/papers/
+*.obo
+*.gaf
+*.gaf.gz
+*.maf
+*.pkl
+
+# Python / Jupyter / Office
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
+~$*
+.gene2go*
+
+# the gbmMINER paper's supplementary tables (publisher files, kept locally only)
+docs/gbmminer_supplementary_tables/

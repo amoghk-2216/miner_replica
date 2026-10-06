@@ -1,0 +1,13 @@
+isb-miner3
+pandas<3
+numpy
+scipy
+scikit-learn
+lifelines
+goatools
+recount3
+matplotlib
+requests
+joblib
+tqdm
+jupyter
