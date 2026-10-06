@@ -1,7 +1,7 @@
 # gbmMINER replication (GBM)
 
-Replication of the gbmMINER transcriptional regulatory network for glioblastoma (Turkarslan et al., medRxiv 2024) on TCGA GBM.
-Notebooks 02 to 07 are the same as in the pan-cancer pipeline; notebook 01 is specific to GBM because it combines RNA-seq and
+Replication of the gbmMINER transcriptional regulatory network for glioblastoma (Turkarslan et al., medRxiv 2024) on TCGA-GBM.
+Notebooks 02 to 07 are the same as in the pan-cancer pipeline (to be uploaded); notebook 01 is specific to GBM because it combines RNA-seq and
 microarray patients, as the paper does.
 
 ## Layout
