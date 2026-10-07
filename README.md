@@ -1,8 +1,62 @@
 # gbmMINER replication (GBM)
 
 Replication of the gbmMINER transcriptional regulatory network for glioblastoma (Turkarslan et al., medRxiv 2024) on TCGA-GBM.
-Notebooks 02 to 07 are the same as in the pan-cancer pipeline (to be uploaded); notebook 01 is specific to GBM because it combines RNA-seq and
-microarray patients, as the paper does.
+Notebooks 02 to 07 follow the pan-cancer pipeline (to be uploaded), with additions for GBM: pathway mutations, miRNA
+regulators and the Gravendeel validation cohort. Notebook 01 is specific to GBM because it combines RNA-seq and microarray
+patients, as the paper does.
+
+**Preprocessing (notebooks 01 and 01b)**
+RNA-seq data from the GDC are combined with Affymetrix microarray data to give 550 patients (284 with RNA-seq, 266 with
+microarray only). Expression is z-scored within each platform to put the two on a common scale, and the 589 genes whose
+RNA-seq and microarray measurements correlate negatively are dropped, leaving 9,790. Notebook 01b builds the miRNA
+expression matrix.
+
+**Clustering and causal mapping (notebook 02)**
+MINER clusters genes on the basis of co-expression across patients. Within a cluster, the genes that carry a binding site
+for the same transcription factor, and whose expression correlates with that TF, form a regulon. Somatic mutations in genes
+and pathways are then linked to regulons through their regulators (causal flows); miRNA regulators are tested separately.
+Each regulon is scored in every patient as overactive, neutral or underactive. Patients with similar activity profiles
+across the network are grouped into transcriptional states, which may correspond to disease subtypes, and regulons whose
+activity varies together across patients are grouped into transcriptional programs.
+
+**Clinical data (notebook 03)**
+Overall survival (time and status) is taken from the TCGA clinical file on cBioPortal; patients without survival
+information are dropped (594 patients, 492 deaths).
+
+**Disease relevance (notebook 04)**
+Each regulon is tested for survival association (Cox regression on its eigengene), for enrichment of cancer hallmarks
+(Gene Ontology terms, Lin similarity >= 0.8) and for replication in an independent cohort (Gravendeel, GSE16011).
+The paper's rule for a disease-relevant regulon, as applied in its Supplementary Table 1, has four parts:
+
+1) Co-expression in TCGA: variance explained by PC1 >= 0.3 and permutation p < 0.05
+2) Survival association in TCGA: Cox hazard ratio p <= 0.05
+3) Replication of co-expression in the independent cohort: PC1 >= 0.3 and permutation p <= 0.05
+4) Replication of the survival association in the independent cohort: Cox p <= 0.05, same direction of effect
+
+Parts 2 to 4 are applied by the notebook and give 1,147 disease-relevant regulons (the paper: 1,083). Part 1 is not a
+filter in the notebook; checked afterwards, all 1,147 pass it (3,872 of all 3,961 regulons do). Notebooks 05 to 07 use an
+earlier, looser list of 1,292 regulons: (survival-associated or hallmark-enriched) and co-expression validated.
+
+**Risk models (notebook 05)**
+Three ridge regression models predict a patient's survival risk (GuanRank score) from gene expression, regulon activity or
+program activity. Each is trained on 70% of the TCGA patients, tuned on 10% and tested on the remaining 20%, and then
+tested without refitting on the 155 GBM patients of Gravendeel. Performance is reported as the C-index and as Kaplan-Meier
+curves of the predicted high- and low-risk groups.
+
+**Master regulators (notebook 06)**
+Causal flows are restricted to published driver genes, and transcription factors that are barely expressed are dropped.
+A TF-TF network is built with LASSO regression: each TF's expression is predicted from the other TFs that have a binding
+site for it. For each transcriptional state, the TFs linked to that state are ranked by the ratio of out-degree to
+in-degree within the network, and those at the top are called master regulators. The paper fits a separate network for
+each state; here one network is fitted for all TFs, and the result does not replicate the paper's (see `RESULTS.md`).
+
+**Candidate regulators (notebook 07)**
+An extension that is not in the paper: TFs are ranked by combining several lines of evidence with Robust Rank Aggregation.
+Not yet run for this dataset.
+
+**Results**
+`RESULTS.md` gives the numbers, compares them with the paper, and states what does not replicate and the known issue with
+the transcriptional states, half of which follow the measurement platform. The main result tables are in `results/`.
 
 ## Layout
 
